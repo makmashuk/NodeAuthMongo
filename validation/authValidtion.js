@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi');
 
-const loginValidation = (data) => {
+const registerValidation = (data) => {
 
     const loginSchema =Joi.object({
         name:Joi.string().min(6).required(),
@@ -11,4 +11,4 @@ const loginValidation = (data) => {
 
 };
 
-module.exports.loginValidation=loginValidation;
+module.exports.registerValidation=registerValidation;
