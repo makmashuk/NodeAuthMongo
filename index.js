@@ -7,6 +7,7 @@ const bodyParser = require('body-parser');
 
 //Import Route
 const authRoute = require('./routes/auth');
+const postRoute = require('./routes/post');
 
 
 //ENV CONFIG
@@ -26,7 +27,8 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 
 //Route Middleware
-app.use('/api/auth', authRoute);
+app.use('/api/auth', authRoute );
+app.use('/api/posts', postRoute )
 
 
 

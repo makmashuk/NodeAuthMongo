@@ -2,6 +2,7 @@ const router = require('express').Router();
 const User = require('../model/user');
 const bcrypt = require ('bcryptjs');
 const { registerValidation,loginValidation } = require('../validation/authValidtion');
+const jwt = require('jsonwebtoken');
 
 
 router.post('/register', async (req,res)=>{
@@ -49,17 +50,20 @@ router.post('/login',async (req, res) => {
         return res.status(400).send(error.details[0].message);
     }
 
-    /* Checking Email Verification */
-    const getUserByEmail =await User.findOne({email:req.body.userEmail});
+    /* Email Verification */
+    const getUserByEmail = await User.findOne({email:req.body.userEmail});
     if(!getUserByEmail){
         return res.status(400).send("Email Or Password Not Matched");
     }
 
+    /* Password verification */
     const validPassword = await bcrypt.compare(req.body.userPassword, getUserByEmail.password)
     if(!validPassword){
         return res.status(400).send("Email Or Password Not Matched");
     }
-    res.send("Logged In Success!!!");
+
+    const token = jwt.sign({ _id : getUserByEmail._id }, process.env.Token_Secret);
+    res.header('auth-token', token).send(token);
     
 });
 
