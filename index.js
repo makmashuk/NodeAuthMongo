@@ -26,7 +26,7 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 
 //Route Middleware
-app.use('/api/user', authRoute);
+app.use('/api/auth', authRoute);
 
 
 

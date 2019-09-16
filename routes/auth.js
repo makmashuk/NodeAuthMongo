@@ -1,16 +1,15 @@
 const router = require('express').Router();
 const User = require('../model/user');
-const { registerValidation } =require('../validation/authValidtion');
 const bcrypt = require ('bcryptjs');
+const { registerValidation,loginValidation } = require('../validation/authValidtion');
 
 
 router.post('/register', async (req,res)=>{
 
-   
     /* Validating User Input */
-    const { error } = registerValidation(req.body);
+    const { error } = await registerValidation(req.body);
     if(error){
-        res.status(400).send(error.details[0].message);
+        return res.status(400).send(error.details[0].message);
     }
 
     /* Checking If User Already Exists*/
@@ -40,6 +39,28 @@ router.post('/register', async (req,res)=>{
         req.status(400).send(err);
     }
 
+});
+
+router.post('/login',async (req, res) => {
+
+    /* Validating User Input  */
+    const { error } = await loginValidation(req.body);
+    if(error){
+        return res.status(400).send(error.details[0].message);
+    }
+
+    /* Checking Email Verification */
+    const getUserByEmail =await User.findOne({email:req.body.userEmail});
+    if(!getUserByEmail){
+        return res.status(400).send("Email Or Password Not Matched");
+    }
+
+    const validPassword = await bcrypt.compare(req.body.userPassword, getUserByEmail.password)
+    if(!validPassword){
+        return res.status(400).send("Email Or Password Not Matched");
+    }
+    res.send("Logged In Success!!!");
+    
 });
 
 
